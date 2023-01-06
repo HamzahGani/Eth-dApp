@@ -1,5 +1,5 @@
   const main = async () => {
-    const [owner, randomPerson] = await hre.ethers.getSigners();
+    const [owner, randomPerson1, randomPerson2] = await hre.ethers.getSigners();
     const waveContractFactory = await hre.ethers.getContractFactory("WavePortal");
     const waveContract = await waveContractFactory.deploy();
     await waveContract.deployed();
@@ -8,16 +8,15 @@
     console.log("Contract deployed by:", owner.address);
   
     await waveContract.getTotalWaves();
-  
+
     const firstWaveTxn = await waveContract.wave();
     await firstWaveTxn.wait();
 
-    await waveContract.getTotalWaves();
-
-    const secondWaveTxn = await waveContract.connect(randomPerson).wave();
+    const secondWaveTxn = await waveContract.connect(randomPerson1).wave();
     await secondWaveTxn.wait();
-  
-    await waveContract.getTotalWaves();
+
+    const ThirdWaveTxn = await waveContract.connect(randomPerson2).wave();
+    await ThirdWaveTxn.wait();
   };
   
   const runMain = async () => {
