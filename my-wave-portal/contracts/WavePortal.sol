@@ -4,7 +4,13 @@ pragma solidity ^0.8.17;
 import "hardhat/console.sol";
 
 contract WavePortal {
+    constructor() payable {
+        console.log("Smart Contract Started !!!");
+        console.log("");
+    }
+
     uint256 totalWaves;
+    uint256 prizeAmount = 0.0001 ether;
 
     event NewWave(address indexed from, uint256 timestamp, string message);
     
@@ -16,24 +22,29 @@ contract WavePortal {
     
     Wave[] waves; // array of Wave structs holding all the waves I receive
 
-    constructor() {
-        console.log("Smart Contract Started !!!");
-        console.log("");
-    }
-
     function waveMessage(string memory _message) public {
         totalWaves += 1;
         console.log("%s has waved with message: %s", msg.sender, _message);
         waves.push(Wave(msg.sender, _message, block.timestamp)); // store the wave in the array
         emit NewWave(msg.sender, block.timestamp, _message);
         getTotalWaves();
+
+        require(prizeAmount <= address(this).balance, "Cannot withdraw more money than the contract contains.");
+        (bool success, ) = (msg.sender).call{value: prizeAmount}("");
+        require(success, "Failed to withdraw money from contract.");
     } // wave from ewallet with message
 
     function wave() public {
+        string memory _message = "No message sent.";
         totalWaves += 1;
-        console.log("%s has waved!: No message sent.", msg.sender);
-        waves.push(Wave(msg.sender, "No message sent.", block.timestamp)); // store the wave in the array
+        console.log("%s has waved with message: %s", msg.sender, _message);
+        waves.push(Wave(msg.sender, _message, block.timestamp)); // store the wave in the array
+        emit NewWave(msg.sender, block.timestamp, _message);
         getTotalWaves();
+
+        require(prizeAmount <= address(this).balance, "Cannot withdraw more money than the contract contains.");
+        (bool success, ) = (msg.sender).call{value: prizeAmount}("");
+        require(success, "Failed to withdraw money from contract.");
     } // wave from ewallet without message
 
     function getAllWaves() public view returns (Wave[] memory) {
