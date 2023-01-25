@@ -22,6 +22,9 @@
     const firstWaveTxn = await waveContract.wave();
     await firstWaveTxn.wait();
 
+    const firstWaveTxnAgain = await waveContract.waveMessage("This is my second wave");
+    await firstWaveTxnAgain.wait();
+
     const secondWaveTxn = await waveContract.connect(randomPerson1).waveMessage("I waved with a message");
     await secondWaveTxn.wait();
 
